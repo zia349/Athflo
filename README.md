@@ -1,39 +1,99 @@
 # Athflo
-A pre-practice wellness check-in app designed for sports teams. Athletes complete a 30-second daily survey before training, giving coaches insight into overall team morale and individual emotional readiness. The platform helps coaching staffs respond more thoughtfully, reduce unnecessary pressure, and make mental health part of performance culture.
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+Athflo is a mobile-first wellness check-in app for sports teams.
 
-## Getting Started
+- Athletes complete quick daily check-ins
+- Coaches monitor team status, trends, and support alerts
+- Demo data is persisted locally (no backend required)
 
-First, run the development server:
+## Tech Stack
+
+- Next.js 16 (App Router)
+- React 19
+- TypeScript
+- Tailwind CSS
+- LocalStorage-based demo session + mock auth
+
+## Features
+
+- Role-based flow: Athlete and Coach experiences
+- Athlete dashboard with readiness pulse, streak, and quick mission
+- Multi-step athlete check-in flow
+- Athlete history and profile pages
+- Coach dashboard with live team stats
+- Coach roster, athlete detail views, alerts, and trends
+- Personalized athlete name from login email
+
+## Local Development
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Run development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- http://localhost:3000
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+If port 3000 is busy, Next.js will automatically use the next available port.
 
-## Learn More
+## Scripts
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npm run dev      # Start dev server
+npm run lint     # Run ESLint
+npm run build    # Create production build
+npm run start    # Start production server
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## App Routes
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Public:
 
-## Deploy on Vercel
+- `/login`
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Athlete:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `/athlete`
+- `/athlete/check-in`
+- `/athlete/history`
+- `/athlete/profile`
+
+Coach:
+
+- `/coach`
+- `/coach/team`
+- `/coach/team/[athleteId]`
+- `/coach/alerts`
+- `/coach/trends`
+
+## Demo Behavior
+
+- Role is inferred from login email:
+	- Email containing `coach` routes to coach experience
+	- All others route to athlete experience
+- Athlete first name is derived from email (for example, `maya.rivera@team.edu` -> `Maya Rivera`)
+- Check-ins update both athlete and coach views via shared local storage
+
+## Deployment (Vercel)
+
+This app is deployment-ready on Vercel.
+
+1. Push this repo to GitHub
+2. Import project in Vercel
+3. Use default Next.js build settings
+4. Deploy
+
+No environment variables are required for the current demo implementation.
+
+## Notes
+
+- This project currently uses mock auth and local persistence for demo speed.
+- Refreshing the browser preserves stored demo state until local storage is cleared.
