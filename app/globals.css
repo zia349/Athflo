@@ -10,6 +10,7 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-athflo-display: var(--font-athflo-display);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -22,5 +23,27 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), "Avenir Next", sans-serif;
+}
+
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-reveal {
+  animation: reveal-up 650ms ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-reveal {
+    animation: none;
+  }
 }
