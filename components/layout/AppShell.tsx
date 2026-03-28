@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import TopBar from "@/components/layout/TopBar";
 import Sidebar from "@/components/layout/Sidebar";
 import { getPageTitle } from "@/lib/navigation";
@@ -16,6 +16,7 @@ type AppShellProps = {
 
 export default function AppShell({ children }: AppShellProps) {
   const pathname = usePathname() ?? "/athlete";
+  const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [drawerTranslate, setDrawerTranslate] = useState<number | null>(null);
 
@@ -35,6 +36,7 @@ export default function AppShell({ children }: AppShellProps) {
   }, [pathname]);
 
   const title = getPageTitle(pathname);
+  const isRootPage = pathname === "/athlete" || pathname === "/coach";
 
   useEffect(() => {
     const onEscape = (event: KeyboardEvent) => {
@@ -162,6 +164,16 @@ export default function AppShell({ children }: AppShellProps) {
             <TopBar
               title={title}
               roleLabel={role === "coach" ? "Coach" : "Athlete"}
+              pathname={pathname}
+              showBackButton={!isRootPage}
+              onBack={() => {
+                if (window.history.length > 1) {
+                  router.back();
+                  return;
+                }
+
+                router.push(role === "coach" ? "/coach" : "/athlete");
+              }}
               onOpenMenu={() => setMobileMenuOpen(true)}
             />
             <main className="mx-auto flex w-full flex-1 flex-col px-3 py-4 sm:px-4 sm:py-5">

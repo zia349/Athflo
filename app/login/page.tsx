@@ -116,23 +116,23 @@ export default function LoginPage() {
                 Sign in
               </button>
             </form>
+          </div>
 
-            <div className="mt-6 space-y-3 border-t border-slate-800 pt-5">
-              <button
-                type="button"
-                onClick={() => continueAs("athlete")}
-                className="w-full rounded-xl border border-emerald-300/50 bg-emerald-300/10 px-4 py-3 text-sm font-medium text-emerald-100 transition hover:bg-emerald-300/15"
-              >
-                Continue as Athlete
-              </button>
-              <button
-                type="button"
-                onClick={() => continueAs("coach")}
-                className="w-full rounded-xl border border-cyan-300/50 bg-cyan-300/10 px-4 py-3 text-sm font-medium text-cyan-100 transition hover:bg-cyan-300/15"
-              >
-                Continue as Coach
-              </button>
-            </div>
+          <div className="grid gap-3">
+            <button
+              type="button"
+              onClick={() => continueAs("athlete")}
+              className="w-full rounded-xl border border-emerald-300/50 bg-emerald-300/10 px-4 py-3 text-sm font-medium text-emerald-100 transition hover:bg-emerald-300/15"
+            >
+              Continue as Athlete
+            </button>
+            <button
+              type="button"
+              onClick={() => continueAs("coach")}
+              className="w-full rounded-xl border border-cyan-300/50 bg-cyan-300/10 px-4 py-3 text-sm font-medium text-cyan-100 transition hover:bg-cyan-300/15"
+            >
+              Continue as Coach
+            </button>
           </div>
         </section>
       </main>
