@@ -4,7 +4,7 @@ Athflo is a mobile-first wellness check-in app for sports teams.
 
 - Athletes complete quick daily check-ins
 - Coaches monitor team status, trends, and support alerts
-- Demo data is persisted locally (no backend required)
+- Demo data is persisted locally.
 
 ## Tech Stack
 
