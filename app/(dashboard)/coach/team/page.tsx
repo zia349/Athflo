@@ -1,14 +1,14 @@
-import Link from "next/link";
+"use client";
 
-const athletes = [
-  { id: "a-101", name: "Jordan Mitchell", mood: "8", energy: "7", readiness: "High", status: "Good" },
-  { id: "a-204", name: "Tara Nguyen", mood: "6", energy: "5", readiness: "Moderate", status: "Watch" },
-  { id: "a-317", name: "Maya Thompson", mood: "4", energy: "4", readiness: "Low", status: "Concern" },
-];
+import { useState } from "react";
+import Link from "next/link";
+import { getStoredDemoTeamData } from "@/lib/demoData";
 
 export default function CoachTeamPage() {
+  const [athletes] = useState(() => getStoredDemoTeamData().athletes);
+
   return (
-    <section className="mx-auto w-full max-w-5xl space-y-5 sm:space-y-6">
+    <section className="mx-auto w-full max-w-[396px] space-y-5 sm:space-y-6">
       <div className="rounded-3xl border border-slate-800 bg-slate-900/70 p-6">
         <h2 className="text-2xl font-semibold text-slate-100">Team Roster</h2>
         <p className="mt-2 text-sm text-slate-300">Open an athlete profile to view supportive trend context.</p>

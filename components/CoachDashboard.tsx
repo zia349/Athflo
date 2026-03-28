@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { getStoredDemoTeamData } from "@/lib/demoData";
 
 interface RadarAxis {
   label: string;
@@ -16,6 +17,7 @@ interface StatCardProps {
   glowColor: string;
   borderColor: string;
   textColor: string;
+  onClick?: () => void;
 }
 
 const RADAR_AXES: RadarAxis[] = [
@@ -48,8 +50,8 @@ function RadarChart({ axes }: { axes: RadarAxis[] }) {
     };
   }, []);
 
-  const cx = 110;
-  const cy = 110;
+  const cx = 125;
+  const cy = 125;
   const maxR = 88;
   const n = axes.length;
   const angle = (i: number) => (Math.PI * 2 * i) / n - Math.PI / 2;
@@ -63,8 +65,8 @@ function RadarChart({ axes }: { axes: RadarAxis[] }) {
   const avgScore = Math.round((axes.reduce((s, a) => s + a.value, 0) / axes.length) * 10 * progress);
 
   return (
-    <div style={{ display: "flex", gap: 24, alignItems: "center", flexWrap: "wrap" }}>
-      <svg width={220} height={220} viewBox="0 0 220 220">
+    <div style={{ display: "flex", gap: 24, alignItems: "center", justifyContent: "center", flexWrap: "wrap", width: "100%" }}>
+      <svg width={250} height={250} viewBox="0 0 250 250">
         {[0.2, 0.4, 0.6, 0.8, 1].map((frac, wi) => (
           <polygon
             key={wi}
@@ -159,12 +161,13 @@ function RadarChart({ axes }: { axes: RadarAxis[] }) {
   );
 }
 
-function StatCard({ label, value, sub, glowColor, borderColor, textColor }: StatCardProps) {
+function StatCard({ label, value, sub, glowColor, borderColor, textColor, onClick }: StatCardProps) {
   const [hovered, setHovered] = useState(false);
   return (
     <div
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
+      onClick={onClick}
       style={{
         background: "rgba(10,20,34,0.72)",
         borderRadius: 16,
@@ -172,6 +175,7 @@ function StatCard({ label, value, sub, glowColor, borderColor, textColor }: Stat
         border: `1px solid ${borderColor}`,
         position: "relative",
         overflow: "hidden",
+        cursor: onClick ? "pointer" : "default",
         transform: hovered ? "translateY(-2px)" : "translateY(0)",
         transition: "transform 0.25s",
       }}
@@ -338,10 +342,25 @@ function BottomCard({
 }
 
 export default function CoachDashboard() {
+  const [showCheckedInList, setShowCheckedInList] = useState(false);
+  const [teamData] = useState(() => getStoredDemoTeamData());
+
+  const totalAthletes = teamData.athletes.length || 1;
+  const checkedInPlayers = teamData.athletes.filter((athlete) => athlete.checkedInToday);
+  const flaggedPlayers = teamData.athletes.filter((athlete) => athlete.status === "Concern" || athlete.status === "Watch");
+  const avgMood = (teamData.athletes.reduce((sum, athlete) => sum + athlete.mood, 0) / totalAthletes).toFixed(1);
+  const avgReadiness = Math.round(
+    (teamData.athletes.reduce((sum, athlete) => {
+      if (athlete.readiness === "High") return sum + 85;
+      if (athlete.readiness === "Moderate") return sum + 70;
+      return sum + 55;
+    }, 0) / totalAthletes),
+  );
+
   const stats = [
     {
       label: "Average mood",
-      value: "7.6 / 10",
+      value: `${avgMood} / 10`,
       sub: "Teamwide today",
       glowColor: "#2dd4bf",
       borderColor: "rgba(45,212,191,0.18)",
@@ -349,15 +368,16 @@ export default function CoachDashboard() {
     },
     {
       label: "Check-ins",
-      value: "26 / 31",
-      sub: "Submitted before practice",
+      value: `${checkedInPlayers.length} / ${totalAthletes}`,
+      sub: "Tap to view who checked in",
       glowColor: "#a78bfa",
       borderColor: "rgba(167,139,250,0.18)",
       textColor: "#a78bfa",
+      onClick: () => setShowCheckedInList((prev) => !prev),
     },
     {
       label: "Flagged",
-      value: "3",
+      value: `${flaggedPlayers.length}`,
       sub: "Needs supportive follow-up",
       glowColor: "#fb7185",
       borderColor: "rgba(251,113,133,0.18)",
@@ -365,7 +385,7 @@ export default function CoachDashboard() {
     },
     {
       label: "Readiness",
-      value: "81%",
+      value: `${avgReadiness}%`,
       sub: "Average confidence score",
       glowColor: "#fbbf24",
       borderColor: "rgba(251,191,36,0.18)",
@@ -457,7 +477,7 @@ export default function CoachDashboard() {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
+            gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
             gap: 12,
             marginBottom: 16,
           }}
@@ -466,6 +486,47 @@ export default function CoachDashboard() {
             <StatCard key={s.label} {...s} />
           ))}
         </div>
+
+        {showCheckedInList ? (
+          <div
+            style={{
+              background: "rgba(8,18,32,0.82)",
+              border: "1px solid rgba(167,139,250,0.24)",
+              borderRadius: 16,
+              padding: 14,
+              marginBottom: 16,
+            }}
+          >
+            <div style={{ fontSize: 11, letterSpacing: "0.16em", textTransform: "uppercase", color: "#8b7ab4", marginBottom: 10 }}>
+              Players checked in today
+            </div>
+            {checkedInPlayers.length > 0 ? (
+              <div style={{ display: "grid", gap: 8 }}>
+                {checkedInPlayers.map((athlete) => (
+                  <Link
+                    key={athlete.id}
+                    href={`/coach/team/${athlete.id}`}
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      textDecoration: "none",
+                      background: "rgba(255,255,255,0.03)",
+                      border: "1px solid rgba(255,255,255,0.08)",
+                      borderRadius: 10,
+                      padding: "9px 10px",
+                    }}
+                  >
+                    <span style={{ color: "#d9f7ff", fontSize: 13 }}>{athlete.name}</span>
+                    <span style={{ color: "#8be5ff", fontSize: 12 }}>Profile + history -&gt;</span>
+                  </Link>
+                ))}
+              </div>
+            ) : (
+              <div style={{ color: "#6d89a0", fontSize: 12 }}>No players have checked in yet.</div>
+            )}
+          </div>
+        ) : null}
 
         <div
           style={{
@@ -536,7 +597,7 @@ export default function CoachDashboard() {
                 <div style={{ fontFamily: "Outfit,sans-serif", fontSize: 18, fontWeight: 700, color: "#fff" }}>
                   Pulse overview
                 </div>
-                <div style={{ fontSize: 12, color: "#3d6878", marginTop: 3 }}>26 of 31 checked in</div>
+                <div style={{ fontSize: 12, color: "#3d6878", marginTop: 3 }}>{checkedInPlayers.length} of {totalAthletes} checked in</div>
               </div>
               <span style={{ fontSize: 11, color: "#3d6878" }}>Live update</span>
             </div>
@@ -572,9 +633,9 @@ export default function CoachDashboard() {
               </div>
               <div style={{ fontSize: 12, color: "#3d6878", marginTop: 3 }}>Updates as athletes submit.</div>
             </div>
-            <RingProgress checked={26} total={31} />
+            <RingProgress checked={checkedInPlayers.length} total={totalAthletes} />
             <div style={{ fontSize: 12, color: "#2a5060", textAlign: "center", marginTop: "auto" }}>
-              <span style={{ color: "#2dd4bf", fontWeight: 600 }}>5 remaining</span> - send a nudge?
+              <span style={{ color: "#2dd4bf", fontWeight: 600 }}>{Math.max(totalAthletes - checkedInPlayers.length, 0)} remaining</span> - send a nudge?
             </div>
           </div>
         </div>

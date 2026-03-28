@@ -2,23 +2,52 @@
 
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
-import { setStoredMockRole } from "@/lib/mockAuth";
+import { setStoredActiveAthleteId, setStoredMockRole } from "@/lib/mockAuth";
 import { AppRole } from "@/lib/roles";
+import { ensureDemoTeamData, randomizeActiveAthleteNameForSession, setActiveAthleteName } from "@/lib/demoData";
 
 export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const toTitleCase = (value: string) =>
+    value
+      .split(" ")
+      .filter(Boolean)
+      .map((part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
+      .join(" ");
+
+  const getNameFromEmail = (input: string) => {
+    const local = input.split("@")[0] ?? "";
+    const normalized = local.replace(/[._-]+/g, " ").trim();
+    return toTitleCase(normalized);
+  };
+
+  const initializeDemoSession = (role: AppRole, athleteName?: string) => {
+    ensureDemoTeamData();
+
+    if (role === "athlete") {
+      setStoredActiveAthleteId("a-101");
+      if (athleteName && athleteName.length > 0) {
+        setActiveAthleteName(athleteName);
+      } else {
+        randomizeActiveAthleteNameForSession();
+      }
+    }
+  };
+
   const onSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const role: AppRole = email.toLowerCase().includes("coach") ? "coach" : "athlete";
     setStoredMockRole(role);
+    initializeDemoSession(role, role === "athlete" ? getNameFromEmail(email) : undefined);
     router.push(role === "coach" ? "/coach" : "/athlete");
   };
 
   const continueAs = (role: AppRole) => {
     setStoredMockRole(role);
+    initializeDemoSession(role);
     router.push(role === "coach" ? "/coach" : "/athlete");
   };
 
@@ -26,20 +55,20 @@ export default function LoginPage() {
     <div className="relative min-h-screen overflow-hidden bg-slate-950 text-slate-100">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(14,165,233,0.2),transparent_36%),radial-gradient(circle_at_80%_0%,rgba(16,185,129,0.18),transparent_38%)]" />
 
-      <main className="relative mx-auto flex min-h-screen w-full max-w-6xl items-center px-6 py-10 sm:px-10">
-        <section className="grid w-full gap-8 lg:grid-cols-[1.1fr_0.9fr]">
-          <div className="space-y-5">
+      <main className="relative mx-auto flex min-h-[100dvh] w-full max-w-[430px] items-center border-x border-slate-800/70 px-4 py-6">
+        <section className="grid w-full gap-5">
+          <div className="space-y-4">
             <p className="font-[family-name:var(--font-athflo-display)] text-5xl uppercase tracking-[0.12em] text-cyan-200 sm:text-6xl">
               Athflo
             </p>
-            <h1 className="max-w-xl text-3xl font-semibold leading-tight text-white sm:text-4xl">
+            <h1 className="text-3xl font-semibold leading-tight text-white">
               Team wellbeing, in one calm and connected workspace.
             </h1>
-            <p className="max-w-xl text-base leading-7 text-slate-300">
+            <p className="text-sm leading-6 text-slate-300">
               Athletes can check in quickly before practice. Coaches can view trends and status context in a supportive,
               respectful dashboard.
             </p>
-            <div className="grid gap-3 sm:grid-cols-2">
+            <div className="grid gap-3 grid-cols-2">
               <article className="rounded-2xl border border-slate-800 bg-slate-900/70 p-4">
                 <p className="text-xs uppercase tracking-[0.1em] text-slate-400">Athlete</p>
                 <p className="mt-2 text-sm text-slate-200">Daily check-in, history, and profile insights.</p>
@@ -51,7 +80,7 @@ export default function LoginPage() {
             </div>
           </div>
 
-          <div className="rounded-3xl border border-cyan-300/30 bg-slate-900/85 p-6 shadow-[0_30px_80px_rgba(8,145,178,0.22)] backdrop-blur-sm sm:p-8">
+          <div className="rounded-3xl border border-cyan-300/30 bg-slate-900/85 p-5 shadow-[0_24px_60px_rgba(8,145,178,0.2)] backdrop-blur-sm">
             <p className="text-xs uppercase tracking-[0.12em] text-cyan-200">Sign in</p>
             <h2 className="mt-2 text-2xl font-semibold text-slate-100">Welcome to your Athflo app</h2>
 

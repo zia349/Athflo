@@ -1,6 +1,9 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { saveAthleteCheckInToDemoData } from "@/lib/demoData";
+import { getStoredActiveAthleteId } from "@/lib/mockAuth";
 
 interface MoodTheme {
   bg: string;
@@ -454,6 +457,7 @@ function CompletionRing({ score }: { score: number }) {
 }
 
 export default function AthleteCheckIn() {
+  const router = useRouter();
   const [step, setStep] = useState(0);
   const [moodVal, setMoodVal] = useState(5);
   const TOTAL = 3;
@@ -466,9 +470,10 @@ export default function AthleteCheckIn() {
     if (step > 0) setStep((s) => s - 1);
   };
   const finish = () => setStep(3);
-  const restart = () => {
-    setStep(0);
-    setMoodVal(5);
+  const goToDashboard = () => {
+    const athleteId = getStoredActiveAthleteId() ?? "a-101";
+    saveAthleteCheckInToDemoData({ athleteId, mood: moodVal });
+    router.push("/athlete");
   };
   const backArrowLabel = step === 3 ? "Last question" : "Back";
   const goBackWithArrow = () => {
@@ -857,7 +862,7 @@ export default function AthleteCheckIn() {
                 Keep showing up - it matters.
               </div>
               <button
-                onClick={restart}
+                onClick={goToDashboard}
                 style={{
                   marginTop: 8,
                   padding: "16px 40px",

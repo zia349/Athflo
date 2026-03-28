@@ -1,60 +1,88 @@
 const historyRows = [
-  { day: "Fri", mood: "8/10", energy: "7/10", readiness: "Ready" },
-  { day: "Thu", mood: "7/10", energy: "6/10", readiness: "Ready" },
-  { day: "Wed", mood: "6/10", energy: "5/10", readiness: "Watch" },
+  { day: "Sun", mood: "7.2", energy: "6.9", readiness: "Ready", note: "Solid reset day" },
+  { day: "Sat", mood: "7.6", energy: "7.4", readiness: "Ready", note: "Great consistency" },
+  { day: "Fri", mood: "7.4", energy: "7.0", readiness: "Ready", note: "Strong finish" },
+  { day: "Thu", mood: "7.1", energy: "6.6", readiness: "Steady", note: "Normal training load" },
+  { day: "Wed", mood: "6.4", energy: "5.8", readiness: "Watch", note: "Short sleep last night" },
 ];
 
 export default function AthleteHistoryPage() {
+  const avgMood = (
+    historyRows.reduce((sum, row) => sum + Number.parseFloat(row.mood), 0) / historyRows.length
+  ).toFixed(1);
+  const moodValues = historyRows.map((row) => Number.parseFloat(row.mood)).reverse();
+  const minMood = Math.min(...moodValues);
+  const maxMood = Math.max(...moodValues);
+  const sparkPoints = moodValues
+    .map((value, index) => {
+      const x = (index / (moodValues.length - 1 || 1)) * 100;
+      const normalized = maxMood === minMood ? 0.5 : (value - minMood) / (maxMood - minMood);
+      const y = 30 - normalized * 24;
+      return `${x},${y}`;
+    })
+    .join(" ");
+
   return (
-    <section className="mx-auto w-full max-w-5xl space-y-5 sm:space-y-6">
-      <div className="rounded-3xl border border-slate-800 bg-slate-900/70 p-6">
-        <h2 className="text-2xl font-semibold text-slate-100">Recent Check-In History</h2>
-        <p className="mt-2 text-sm text-slate-300">A quick look at your recent wellness entries.</p>
+    <section className="mx-auto w-full max-w-[396px] space-y-4 sm:space-y-5">
+      <div className="relative overflow-hidden rounded-3xl border border-cyan-300/35 bg-slate-900/75 p-6 shadow-[0_22px_50px_rgba(8,145,178,0.18)]">
+        <div className="pointer-events-none absolute -right-10 -top-12 h-40 w-40 rounded-full bg-cyan-300/20 blur-3xl" />
+        <div className="pointer-events-none absolute -left-12 bottom-0 h-32 w-32 rounded-full bg-violet-300/15 blur-3xl" />
+        <p className="relative text-xs uppercase tracking-[0.12em] text-cyan-200">History</p>
+        <h2 className="relative mt-2 text-2xl font-semibold text-slate-100">Recent check-ins</h2>
+        <p className="relative mt-2 text-sm text-slate-300">Your last few entries, simplified for quick pattern spotting.</p>
+        <div className="relative mt-4 rounded-xl border border-slate-700/80 bg-slate-950/40 p-3">
+          <div className="mb-2 flex items-center justify-between text-[11px] uppercase tracking-[0.08em] text-slate-400">
+            <span>Mood trend</span>
+            <span>Wed to Sun</span>
+          </div>
+          <svg viewBox="0 0 100 30" className="h-12 w-full" role="img" aria-label="Mood trend sparkline">
+            <polyline
+              points={sparkPoints}
+              fill="none"
+              stroke="rgba(56,189,248,0.95)"
+              strokeWidth="2.2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </div>
+        <div className="relative mt-4 flex flex-wrap gap-2 text-xs">
+          <span className="rounded-full border border-cyan-300/40 bg-cyan-300/10 px-3 py-1 text-cyan-200">Avg mood {avgMood}</span>
+          <span className="rounded-full border border-emerald-300/40 bg-emerald-300/10 px-3 py-1 text-emerald-200">Streak 12 days</span>
+          <span className="rounded-full border border-fuchsia-300/40 bg-fuchsia-300/10 px-3 py-1 text-fuchsia-200">Best day Sat</span>
+        </div>
       </div>
 
-      <div className="space-y-3 md:hidden">
+      <div className="space-y-3">
         {historyRows.map((row) => (
-          <article key={row.day} className="rounded-2xl border border-slate-800 bg-slate-900/75 p-4">
-            <p className="text-xs uppercase tracking-[0.08em] text-slate-500">{row.day}</p>
-            <div className="mt-2 grid grid-cols-3 gap-3 text-sm">
+          <article key={row.day} className="rounded-2xl border border-slate-800 bg-slate-900/80 p-4">
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-xs uppercase tracking-[0.08em] text-slate-500">{row.day}</p>
+              <span
+                className={`rounded-full px-2.5 py-1 text-[11px] font-medium ${
+                  row.readiness === "Ready"
+                    ? "bg-emerald-300/15 text-emerald-200"
+                    : row.readiness === "Steady"
+                      ? "bg-cyan-300/15 text-cyan-200"
+                      : "bg-amber-300/15 text-amber-200"
+                }`}
+              >
+                {row.readiness}
+              </span>
+            </div>
+            <div className="mt-3 grid grid-cols-2 gap-3 text-sm">
               <div>
                 <p className="text-slate-400">Mood</p>
-                <p className="font-medium text-slate-100">{row.mood}</p>
+                <p className="font-medium text-slate-100">{row.mood}/10</p>
               </div>
               <div>
                 <p className="text-slate-400">Energy</p>
-                <p className="font-medium text-slate-100">{row.energy}</p>
-              </div>
-              <div>
-                <p className="text-slate-400">Readiness</p>
-                <p className="font-medium text-slate-100">{row.readiness}</p>
+                <p className="font-medium text-slate-100">{row.energy}/10</p>
               </div>
             </div>
+            <p className="mt-3 text-sm text-slate-300">{row.note}</p>
           </article>
         ))}
-      </div>
-
-      <div className="hidden overflow-x-auto rounded-2xl border border-slate-800 bg-slate-900/75 md:block">
-        <table className="w-full min-w-[540px] text-left text-sm">
-          <thead className="bg-slate-900 text-slate-300">
-            <tr>
-              <th className="px-4 py-3 font-medium">Day</th>
-              <th className="px-4 py-3 font-medium">Mood</th>
-              <th className="px-4 py-3 font-medium">Energy</th>
-              <th className="px-4 py-3 font-medium">Readiness</th>
-            </tr>
-          </thead>
-          <tbody>
-            {historyRows.map((row) => (
-              <tr key={row.day} className="border-t border-slate-800 text-slate-200">
-                <td className="px-4 py-3">{row.day}</td>
-                <td className="px-4 py-3">{row.mood}</td>
-                <td className="px-4 py-3">{row.energy}</td>
-                <td className="px-4 py-3">{row.readiness}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
       </div>
     </section>
   );
