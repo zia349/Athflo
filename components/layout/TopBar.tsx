@@ -8,7 +8,7 @@ export default function TopBar({ title, roleLabel, onOpenMenu }: TopBarProps) {
   const initials = roleLabel === "Coach" ? "CO" : "AT";
 
   return (
-    <header className="sticky top-0 z-20 border-b border-slate-800/80 bg-slate-950/90 px-4 py-3 backdrop-blur md:px-6">
+    <header className="safe-top sticky top-0 z-20 border-b border-slate-800/80 bg-slate-950/90 px-3 py-2.5 backdrop-blur sm:px-4 md:px-6 md:py-3">
       <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-3">
         <div className="flex items-center gap-3">
           <button
@@ -19,9 +19,9 @@ export default function TopBar({ title, roleLabel, onOpenMenu }: TopBarProps) {
           >
             <span aria-hidden="true" className="text-xl leading-none">≡</span>
           </button>
-          <div>
+          <div className="min-w-0">
             <p className="text-xs uppercase tracking-[0.1em] text-slate-400">{roleLabel}</p>
-            <h1 className="font-[family-name:var(--font-athflo-display)] text-3xl uppercase leading-none tracking-[0.05em] text-slate-100">
+            <h1 className="truncate font-[family-name:var(--font-athflo-display)] text-xl uppercase leading-none tracking-[0.05em] text-slate-100 sm:text-3xl">
               {title}
             </h1>
           </div>

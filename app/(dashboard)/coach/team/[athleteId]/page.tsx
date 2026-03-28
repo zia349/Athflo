@@ -13,7 +13,7 @@ export default async function CoachAthleteDetailPage({ params }: AthleteDetailPa
   const { athleteId } = await params;
 
   return (
-    <section className="space-y-6">
+    <section className="mx-auto w-full max-w-5xl space-y-5 sm:space-y-6">
       <div className="rounded-3xl border border-slate-800 bg-slate-900/70 p-6">
         <p className="text-xs uppercase tracking-[0.12em] text-slate-400">Athlete Detail</p>
         <h2 className="mt-2 text-2xl font-semibold text-slate-100">Athlete {athleteId}</h2>
@@ -22,7 +22,7 @@ export default async function CoachAthleteDetailPage({ params }: AthleteDetailPa
 
       <div className="rounded-2xl border border-slate-800 bg-slate-900/75 p-5">
         <h3 className="text-lg font-semibold text-slate-100">Recent Check-In History</h3>
-        <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-2">
           {history.map((entry) => (
             <article key={entry.day} className="rounded-xl border border-slate-800 bg-slate-950/70 px-4 py-3">
               <p className="text-xs uppercase tracking-[0.1em] text-slate-400">{entry.day}</p>

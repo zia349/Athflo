@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Teko } from "next/font/google";
 import "./globals.css";
 
@@ -23,6 +23,12 @@ export const metadata: Metadata = {
     "Athflo MoodCheck helps college teams run 30-second pre-practice wellness check-ins so coaches can better understand team morale and athlete readiness.",
 };
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -33,7 +39,9 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} ${athfloDisplay.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body suppressHydrationWarning className="min-h-full flex flex-col">
+        {children}
+      </body>
     </html>
   );
 }

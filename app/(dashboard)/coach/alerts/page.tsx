@@ -15,7 +15,7 @@ const alerts = [
 
 export default function CoachAlertsPage() {
   return (
-    <section className="space-y-6">
+    <section className="mx-auto w-full max-w-5xl space-y-5 sm:space-y-6">
       <div className="rounded-3xl border border-slate-800 bg-slate-900/70 p-6">
         <h2 className="text-2xl font-semibold text-slate-100">Support Alerts</h2>
         <p className="mt-2 text-sm text-slate-300">Signals intended to guide respectful support and communication.</p>

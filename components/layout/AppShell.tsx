@@ -41,7 +41,7 @@ export default function AppShell({ children }: AppShellProps) {
   }, []);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100">
+    <div className="min-h-screen bg-slate-950 text-slate-100 safe-x safe-bottom">
       <div className="relative">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_0%_0%,rgba(14,165,233,0.18),transparent_45%),radial-gradient(circle_at_90%_15%,rgba(16,185,129,0.12),transparent_35%)]" />
 
@@ -74,7 +74,7 @@ export default function AppShell({ children }: AppShellProps) {
               roleLabel={role === "coach" ? "Coach" : "Athlete"}
               onOpenMenu={() => setMobileMenuOpen(true)}
             />
-            <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 py-6 md:px-6 md:py-8">
+            <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col px-3 py-5 sm:px-4 md:px-6 md:py-8">
               {children}
             </main>
           </div>
